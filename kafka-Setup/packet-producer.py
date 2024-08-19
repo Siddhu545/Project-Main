@@ -3,15 +3,16 @@ from scapy.all import sniff, IP, TCP, UDP
 from kafka import KafkaProducer
 import json
 from datetime import datetime
+import requests
+import threading
+import time
 
 app = Flask(__name__)
 
-
-kafka_bootstrap_servers = ['localhost:9092']
+kafka_bootstrap_servers = ['kafka:9093']
 kafka_topic = 'network-packets-ids'
 producer = KafkaProducer(bootstrap_servers=kafka_bootstrap_servers,
                          value_serializer=lambda v: json.dumps(v).encode('utf-8'))
-
 
 totalSourceBytes = {}
 totalDestinationBytes = {}
@@ -21,6 +22,9 @@ sourceTCPFlagsDescription = {}
 destinationTCPFlagsDescription = {}
 startDateTime = None
 stopDateTime = None
+
+interface = input('Enter the network interface name: ')
+capture_duration = int(input('Enter the capture duration (in seconds): '))
 
 def get_flag_description(flags):
     flag_descriptions = {
@@ -34,6 +38,7 @@ def get_flag_description(flags):
         'C': 'CWR'
     }
     return ''.join(flag_descriptions.get(flag, '') for flag in flags)
+
 def calculate_duration(start, stop):
     start_time = datetime.fromisoformat(start)
     stop_time = datetime.fromisoformat(stop)
@@ -99,25 +104,28 @@ def packet_handler(packet):
             "startDateTime": startDateTime,
             "stopDateTime": stopDateTime,
             "duration": duration,
-            # "type": ethertype,
-            # "payload": str(packet.payload),
-            # "timestamp": datetime.now().isoformat(),
-            # "size": size,
-            # "TTL": ttl,
-            # "checksums": checksums,
-            # "flags": flags,
         }
 
         return producer.send(kafka_topic, value=packet_info)
 
 @app.route('/capture-packets', methods=['POST'])
 def capture_packets():
-    interface = input('Enter the network interface name: ')
-    capture_duration = int(input('Enter the capture duration (in seconds): '))
     print(f'Starting packet capture on interface {interface} for {capture_duration} seconds...')
     sniff(iface=interface, prn=packet_handler, timeout=capture_duration)
     return jsonify({"status": "Packet capture completed"}), 200
 
-if __name__ == '__main__':
+def automate_capture():
+
+    time.sleep(5)  
+    requests.post('http://localhost:5001/capture-packets')
+    print("Capture request sent.")
+
+def start_flask():
     app.run(host='0.0.0.0', port=5001)
 
+if __name__ == '__main__':
+
+    threading.Thread(target=start_flask).start()
+
+
+    automate_capture()

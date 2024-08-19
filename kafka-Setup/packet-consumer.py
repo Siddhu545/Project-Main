@@ -1,25 +1,22 @@
+import threading
 import numpy as np
 import pandas as pd
 import ipaddress
 from sklearn.preprocessing import LabelEncoder
 import joblib
 from kafka import KafkaConsumer
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify
 import json
 
-
-model = joblib.load('../MLModel/trained_model.pkl')
-
+model = joblib.load('/app/trained_model.pkl')
 
 app = Flask(__name__)
 
-
-kafka_bootstrap_servers = ['localhost:9092']
+kafka_bootstrap_servers = ['kafka:9093']
 kafka_topic = 'network-packets-ids'
 consumer = KafkaConsumer(kafka_topic,
                          bootstrap_servers=kafka_bootstrap_servers,
                          value_deserializer=lambda x: json.loads(x.decode('utf-8')))
-
 
 def ip_to_int(ip_str):
     return int(ipaddress.ip_address(ip_str))
@@ -39,10 +36,8 @@ def preprocess_packet(packet_info):
     df_packet['startDateTime'] = pd.to_datetime(df_packet['startDateTime'], format='%Y-%m-%dT%H:%M:%S.%f')
     df_packet['stopDateTime'] = pd.to_datetime(df_packet['stopDateTime'], format='%Y-%m-%dT%H:%M:%S.%f')
 
-
     df_packet['duration'] = (df_packet['stopDateTime'] - df_packet['startDateTime']).dt.total_seconds()
     df_packet.drop(['startDateTime', 'stopDateTime'], axis=1, inplace=True)
-    
     
     print("Processed packet info:")
     print(df_packet.columns)
@@ -58,7 +53,6 @@ def predict():
 
         df_packet = preprocess_packet(packet_info).values
 
-
         print("Packet ready for prediction:")
         print(df_packet)
 
@@ -67,9 +61,15 @@ def predict():
 
         packet_labels.append({'packet_info': packet_info, 'Label': label})
 
-        break
-
     return jsonify(packet_labels)
 
+def automate_prediction():
+    print("Starting prediction automatically...")
+    predict()
+
 if __name__ == '__main__':
-    app.run(debug=True)
+
+    threading.Thread(target=app.run, kwargs={'host': '0.0.0.0', 'port': 5002}).start()
+
+
+    automate_prediction()
