@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     environment {
-        // Define environment variables for Kafka and other settings
         KAFKA_DOCKER_IMAGE = 'confluentinc/cp-kafka:latest'
         KAFKA_CONTAINER_NAME = 'kafka'
         GIT_REPO_URL = 'https://github.com/Siddhu545/Project-Main.git'
@@ -14,6 +13,14 @@ pipeline {
             steps {
                 // Checkout the latest code from the repository
                 git branch: "${GIT_BRANCH}", url: "${GIT_REPO_URL}"
+            }
+        }
+
+        stage('pull kafka image') {
+            steps{
+                script{
+                    sh 'docker pull {KAFKA_DOCKER_IMAGE}'
+                }
             }
         }
 
