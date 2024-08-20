@@ -19,7 +19,7 @@ pipeline {
         stage('pull kafka image') {
             steps{
                 script{
-                    sh 'docker pull {KAFKA_DOCKER_IMAGE}'
+                    sh 'docker pull ${KAFKA_DOCKER_IMAGE}'
                 }
             }
         }
