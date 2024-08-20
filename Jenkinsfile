@@ -41,7 +41,7 @@ pipeline {
                 script {
                     // Install dependencies for your Flask apps
                     sh '''
-                        pip install -r requirements.txt
+                        pip install -r ../Jenkins_Pipeline/requirements.txt
                     '''
                 }
             }
@@ -53,10 +53,10 @@ pipeline {
                     // Run the packet capture and prediction scripts
                     sh '''
                         # Start the Flask app for packet capture
-                        nohup python capture_app.py > capture.log 2>&1 &
+                        nohup python ../Jenkins_Pipeline/packet-producer.py > capture.log 2>&1 &
                         
                         # Start the Flask app for prediction
-                        nohup python prediction_app.py > prediction.log 2>&1 &
+                        nohup python ../Jenkins_Pipeline/packet-consumer.py > prediction.log 2>&1 &
                     '''
                 }
             }
