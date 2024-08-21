@@ -24,6 +24,14 @@ pipeline {
             }
         }
 
+        stage('Setup-Python') {
+            steps {
+                script {
+                    sh 'docker pull python:3.9-slim'
+                }
+            }
+        }
+
         stage('Setup Kafka') {
             steps {
                 script {
@@ -39,15 +47,6 @@ pipeline {
                             -e KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181 \
                             ${KAFKA_DOCKER_IMAGE}
                     '''
-                }
-            }
-        }
-
-        stage('Setup-Python') {
-            steps {
-                script {
-                    // Pull the Docker image
-                    sh 'docker pull python:3.9-slim'
                 }
             }
         }
