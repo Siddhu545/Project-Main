@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.9-slim' 
-            args '-u root' 
-        }
-    }
+    agent any
 
     environment {
         KAFKA_DOCKER_IMAGE = 'confluentinc/cp-kafka:latest'
