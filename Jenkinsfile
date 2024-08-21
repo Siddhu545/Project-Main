@@ -43,6 +43,15 @@ pipeline {
             }
         }
 
+        stage('Setup-Python') {
+            steps {
+                script {
+                    // Pull the Docker image
+                    sh 'docker pull python:3.9-slim'
+                }
+            }
+        }
+
         stage('Install Dependencies') {
             steps {
                 script {
