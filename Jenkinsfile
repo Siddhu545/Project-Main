@@ -54,10 +54,7 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 script {
-                    sh '''
-                        apt install python3-pip
-                        pip install -r ../Jenkins_Pipeline/requirements.txt
-                    '''
+                    sh 'pip install -r ../Jenkins_Pipeline/requirements.txt'
                 }
             }
         }
