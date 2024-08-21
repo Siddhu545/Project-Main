@@ -51,10 +51,28 @@ pipeline {
             }
         }
 
+        stage('Set Up Virtual Environment') {
+            steps {
+                script {
+                    // Define the path to the virtual environment
+                    def venvPath = '/path/to/venv'
+
+                    // Create the virtual environment
+                    sh """
+                        python3 -m venv ${venvPath}
+                    """
+                }
+            }
+        }
         stage('Install Dependencies') {
             steps {
                 script {
-                    sh 'pip install -r ../Jenkins_Pipeline/requirements.txt'
+                    def venvPath = '/path/to/venv'
+                    // Install pip and dependencies within the virtual environment
+                    sh """
+                        ${venvPath}/bin/python -m pip install --upgrade pip
+                        ${venvPath}/bin/pip install -r ../Jenkins_Pipeline/requirements.txt
+                    """
                 }
             }
         }
