@@ -8,6 +8,13 @@ pipeline {
         GIT_BRANCH = 'main'
     }
 
+    agent {
+        docker {
+            image 'python:3.9-slim' 
+            args '-u root' 
+        }
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -38,18 +45,6 @@ pipeline {
                             -e KAFKA_LISTENER_NAME_PLAINTEXT=INSIDE \
                             -e KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181 \
                             ${KAFKA_DOCKER_IMAGE}
-                    '''
-                }
-            }
-        }
-
-        stage('Install Python and Pip') {
-            steps {
-                script {
-                    // Install Python and pip (for Ubuntu/Debian systems)
-                    sh '''
-                        apt-get update
-                        apt-get install -y python3 python3-pip
                     '''
                 }
             }
