@@ -19,7 +19,7 @@ pipeline {
         stage('pull kafka image') {
             steps{
                 script{
-                    sh 'sudo docker pull ${KAFKA_DOCKER_IMAGE}'
+                    sh 'docker pull ${KAFKA_DOCKER_IMAGE}'
                 }
             }
         }
@@ -29,7 +29,7 @@ pipeline {
                 script {
                     // Run Kafka in a Docker container
                     sh '''
-                        sudo docker run -d \
+                        docker run -d \
                             --name ${KAFKA_CONTAINER_NAME} \
                             -p 9093:9093 \
                             -e KAFKA_ADVERTISED_LISTENERS=INSIDE://localhost:9093,OUTSIDE://localhost:9092 \
