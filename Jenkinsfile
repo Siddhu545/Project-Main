@@ -43,6 +43,18 @@ pipeline {
             }
         }
 
+        stage('Install Python and Pip') {
+            steps {
+                script {
+                    // Install Python and pip (for Ubuntu/Debian systems)
+                    sh '''
+                        apt-get update
+                        apt-get install -y python3 python3-pip
+                    '''
+                }
+            }
+        }
+
         stage('Install Dependencies') {
             steps {
                 script {
