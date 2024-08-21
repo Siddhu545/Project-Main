@@ -57,6 +57,7 @@ pipeline {
                     sh ''' 
                         # create dir
                         cd /home
+                        ls
                         sudo mkdir venv
 
                         # we will go in that dir
