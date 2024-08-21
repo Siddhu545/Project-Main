@@ -56,7 +56,7 @@ pipeline {
                 script {
                     // Install dependencies for your Flask apps
                     sh '''
-                        pip install -r ../Jenkins_Pipeline/requirements.txt
+                        python3 -mpip install -r ../Jenkins_Pipeline/requirements.txt
                     '''
                 }
             }
