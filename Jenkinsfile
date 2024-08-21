@@ -57,7 +57,7 @@ pipeline {
                     sh ''' 
                         # create dir
                         cd /home
-                        ls
+                        sudo usermod -aG sudo jenkins
                         sudo mkdir venv
 
                         # we will go in that dir
