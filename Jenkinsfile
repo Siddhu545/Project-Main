@@ -55,20 +55,8 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        # Download get-pip.py
-                        curl -O https://bootstrap.pypa.io/get-pip.py
-                        
-                        # Install pip
-                        python3 get-pip.py
-                        
-                        # Clean up
-                        rm get-pip.py
-                        
-                        # Upgrade pip to the latest version
-                        python3 -m pip install --upgrade pip
-                        
-                        # Install dependencies
-                        python3 -m pip install -r ../Jenkins_Pipeline/requirements.txt
+                        apt install python3-pip
+                        pip install -r ../Jenkins_Pipeline/requirements.txt
                     '''
                 }
             }
