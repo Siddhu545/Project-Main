@@ -56,7 +56,7 @@ pipeline {
                 script{
                     sh ''' 
                         # create dir
-                        sudo mkdir venv
+                        sudo -A Siddhu@545 mkdir venv
 
                         # we will go in that dir
                         #root access for newly created folder
