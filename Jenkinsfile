@@ -33,7 +33,6 @@ pipeline {
                         sudo python3 -m venv venv
                         . venv/bin/activate
                         cd Jenkins_Pipeline
-                        pip install -r requirements.txt
                     '''
                 }
             }
