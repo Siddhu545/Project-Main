@@ -8,17 +8,26 @@ pipeline {
         GIT_BRANCH = 'main'
     }
 
-    stage('Setup-Python') {
-        steps {
-            script {
+
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: "${GIT_BRANCH}", url: "${GIT_REPO_URL}"
+            }
+        }
+
+        stage('Setup-Python') {
+            steps {
+                script {
                     sh 'docker pull python:3.9-slim'
                 }
             }
         }
 
-    stage ('setup virtual env for python'){
-            steps {
-                script{
+        stage ('setup virtual env for python'){
+                steps {
+                    script{
                     sh ''' 
                         # Check if the 'venv' directory exists
                         if [ -d "venv" ]; then
@@ -45,13 +54,6 @@ pipeline {
                         python3 -m pip install -r ./requirements.txt
                     '''
                 }
-            }
-        }
-
-    stages {
-        stage('Checkout') {
-            steps {
-                git branch: "${GIT_BRANCH}", url: "${GIT_REPO_URL}"
             }
         }
 
