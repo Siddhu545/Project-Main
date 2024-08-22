@@ -77,7 +77,7 @@ pipeline {
                         . bin/activate
 
                         # Install dependencies from the requirements file
-                        python3 -m pip install -r ./requirement.txt
+                        python3 -m pip install -r ./requirements.txt
                     '''
                 }
             }
