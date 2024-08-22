@@ -8,8 +8,6 @@ pipeline {
         GIT_BRANCH = 'main'
     }
 
-
-
     stages {
         stage('Checkout') {
             steps {
@@ -25,41 +23,24 @@ pipeline {
             }
         }
 
-        stage ('setup virtual env for python'){
-                steps {
-                    script{
-                    sh ''' 
-                        # Check if the 'venv' directory exists
+        stage ('Setup Virtual Env for Python') {
+            steps {
+                script {
+                    sh '''
                         if [ -d "venv" ]; then
-                        # If it exists, remove the directory
-                        echo "Siddhu@545" | sudo -S rm -rf venv
+                            echo "Siddhu@545" | sudo -S rm -rf venv
                         fi
-
-                        # Create the 'venv' directory
-                        echo "Siddhu@545" | sudo -S mkdir venv
-
-                        # Change permissions for the 'venv' directory
-                        sudo chmod -R a+rwx venv
-
-                        # Go into the 'venv' directory
-                        cd venv 
-
-                        # Create a virtual environment
-                        sudo python3 -m venv .
-
-                        # Activate the virtual environment
-                        . bin/activate
-
-                        # Install dependencies from the requirements file
-                        python3 -m pip freeze > ./requirements.txt
+                        sudo python3 -m venv venv
+                        . venv/bin/activate
+                        python3 -m pip install -r requirements.txt
                     '''
                 }
             }
         }
 
-        stage('pull kafka image') {
-            steps{
-                script{
+        stage('Pull Kafka Image') {
+            steps {
+                script {
                     sh 'docker pull ${KAFKA_DOCKER_IMAGE}'
                 }
             }
@@ -68,7 +49,6 @@ pipeline {
         stage('Setup Kafka') {
             steps {
                 script {
-                    // Run Kafka in a Docker container
                     sh '''
                         docker run -d \
                             --name ${KAFKA_CONTAINER_NAME} \
@@ -87,12 +67,10 @@ pipeline {
         stage('Run Packet Capture and Prediction') {
             steps {
                 script {
-                    // Run the packet capture and prediction scripts
+                    // Run the Flask app for packet capture and prediction
                     sh '''
-                        # Start the Flask app for packet capture
-                         python3 ../Jenkins_Pipeline/packet-producer.py > capture.log 2>&1 &
-                        
-                        # Start the Flask app for prediction
+                        . venv/bin/activate
+                        python3 ../Jenkins_Pipeline/packet-producer.py > capture.log 2>&1 &
                         python3 ../Jenkins_Pipeline/packet-consumer.py > prediction.log 2>&1 &
                     '''
                 }
@@ -103,11 +81,11 @@ pipeline {
             steps {
                 script {
                     sh '''
-                    echo "----- Capture Log -----"
-                    cat capture.log
-                    echo "----- Prediction Log -----"
-                    cat prediction.log
-                '''
+                        echo "----- Capture Log -----"
+                        cat capture.log
+                        echo "----- Prediction Log -----"
+                        cat prediction.log
+                    '''
                 }
             }
         }
@@ -115,7 +93,6 @@ pipeline {
 
     post {
         always {
-            // Clean up Docker containers after build
             sh '''
                 docker stop ${KAFKA_CONTAINER_NAME} || true
                 docker rm ${KAFKA_CONTAINER_NAME} || true

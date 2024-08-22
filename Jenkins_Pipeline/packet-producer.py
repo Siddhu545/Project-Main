@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from scapy.all import sniff, IP, TCP, UDP
 from kafka import KafkaProducer
 import json
@@ -15,6 +15,10 @@ username = os.getenv('JENKINS_USERNAME', '5id_K')
 password = os.getenv('JENKINS_PASSWORD', 'Siddhu@545')
 
 app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 # Kafka configuration
 kafka_bootstrap_servers = ['kafka:9093']
