@@ -55,17 +55,28 @@ pipeline {
             steps {
                 script{
                     sh ''' 
-                        # create dir
+                        # Check if the 'venv' directory exists
+                        if [ -d "venv" ]; then
+                        # If it exists, remove the directory
+                        echo "Siddhu@545" | sudo -S rm -rf venv
+                        fi
+
+                        # Create the 'venv' directory
                         echo "Siddhu@545" | sudo -S mkdir venv
 
-                        # we will go in that dir
-                        #root access for newly created folder
+                        # Change permissions for the 'venv' directory
                         sudo chmod -R a+rwx venv
+
+                        # Go into the 'venv' directory
                         cd venv 
+
+                        # Create a virtual environment
                         sudo python3 -m venv .
+
+                        # Activate the virtual environment
                         . bin/activate
 
-                        #install depencies
+                        # Install dependencies from the requirements file
                         python3 -m pip install -r ./requirement.txt
                     '''
                 }
