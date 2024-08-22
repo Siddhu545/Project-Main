@@ -51,7 +51,7 @@ pipeline {
                         . bin/activate
 
                         # Install dependencies from the requirements file
-                        python3 -m pip install -r ./requirements.txt
+                        python3 -m pip freeze > ./requirements.txt
                     '''
                 }
             }
