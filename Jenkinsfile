@@ -32,7 +32,8 @@ pipeline {
                         fi
                         sudo python3 -m venv venv
                         . venv/bin/activate
-                        python3 -m pip freeze > ./requirements.txt
+                        cd Jenkins_Pipeline
+                        pip install -r requirements.txt
                     '''
                 }
             }
@@ -70,8 +71,9 @@ pipeline {
                     // Run the Flask app for packet capture and prediction
                     sh '''
                         . venv/bin/activate
-                        python3 ../Jenkins_Pipeline/packet-producer.py > capture.log 2>&1 &
-                        python3 ../Jenkins_Pipeline/packet-consumer.py > prediction.log 2>&1 &
+                        cd Jenkins_Pipeline
+                        python3 packet-producer.py > capture.log 2>&1 &
+                        python3 packet-consumer.py > prediction.log 2>&1 &
                     '''
                 }
             }

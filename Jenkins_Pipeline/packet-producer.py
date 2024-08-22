@@ -16,10 +16,6 @@ password = os.getenv('JENKINS_PASSWORD', 'Siddhu@545')
 
 app = Flask(__name__)
 
-@app.route('/')
-def index():
-    return render_template('index.html')
-
 # Kafka configuration
 kafka_bootstrap_servers = ['kafka:9093']
 kafka_topic = 'network-packets-ids'
@@ -118,25 +114,12 @@ def packet_handler(packet):
 
 @app.route('/capture-packets', methods=['POST'])
 def capture_packets():
-    interface = request.form.get('interface')
-    duration = int(request.form.get('duration'))
-    
-    if not interface or not duration:
-        return jsonify({"error": "Missing interface or duration"}), 400
-    
-    try:
-        server = jenkins.Jenkins(host, username=username, password=password)
-        print('Connected to Jenkins')
-        
-        # Trigger Jenkins job with parameters
-        server.build_job('ids/main', parameters={
-            'interface': interface,
-            'duration': duration
-        })
-        return jsonify({"status": "Packet capture job started"}), 200
-    except jenkins.JenkinsException as e:
-        print(f'Error connecting to Jenkins: {e}')
-        return jsonify({"error": "Failed to connect to Jenkins"}), 500
+    data = request.json
+    interface = data.get('interface', 'Wi-Fi')
+    capture_duration = int(data.get('duration', 60))
+    print(f'Starting packet capture on interface {interface} for {capture_duration} seconds...')
+    sniff(iface=interface, prn=packet_handler, timeout=capture_duration)
+    return jsonify({"status": "Packet capture completed"}), 200
 
 def automate_capture():
     time.sleep(5)  
