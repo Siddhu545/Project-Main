@@ -108,6 +108,8 @@ def packet_handler(packet):
             "duration": duration,
         }
 
+        print(json.dumps(packet_info, indent=4))
+
         producer.send(kafka_topic, value=packet_info)
 
 @app.route('/capture-packets', methods=['POST'])
