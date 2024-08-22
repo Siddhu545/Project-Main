@@ -63,7 +63,7 @@ pipeline {
                         sudo chmod -R a+rwx venv
                         cd venv 
                         sudo python3 -m venv .
-                        source bin/activate
+                        . bin/activate
 
                         #install depencies
                         python3 -m pip install -r ./requirement.txt
