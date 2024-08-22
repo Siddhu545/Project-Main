@@ -90,11 +90,24 @@ pipeline {
                     // Run the packet capture and prediction scripts
                     sh '''
                         # Start the Flask app for packet capture
-                        nohup python ../Jenkins_Pipeline/packet-producer.py > capture.log 2>&1 &
+                         python3 ../Jenkins_Pipeline/packet-producer.py > capture.log 2>&1 &
                         
                         # Start the Flask app for prediction
-                        nohup python ../Jenkins_Pipeline/packet-consumer.py > prediction.log 2>&1 &
+                        python3 ../Jenkins_Pipeline/packet-consumer.py > prediction.log 2>&1 &
                     '''
+                }
+            }
+        }
+
+        stage('View Logs') {
+            steps {
+                script {
+                    sh '''
+                    echo "----- Capture Log -----"
+                    cat capture.log
+                    echo "----- Prediction Log -----"
+                    cat prediction.log
+                '''
                 }
             }
         }
